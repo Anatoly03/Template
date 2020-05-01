@@ -47,5 +47,12 @@ export default class Game {
 
 		this.map.render(this.canvas);
 		this.players.forEach(element => element.render(this.canvas));
+
+		let controlledPlayer = this.players[0];
+        let px: number = Math.round(controlledPlayer.x);
+		let py: number = Math.round(controlledPlayer.y);
+		
+		this.ctx.strokeStyle = "red";
+		this.ctx.strokeRect(40 * (px - 1), 40 * (py - 1), 40 * 3, 40 * 3);
 	}
 }

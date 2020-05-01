@@ -29,32 +29,54 @@ export default class Player {
     public updateBlockCollision(map: Map): void {
         let px: number = Math.round(this.x);
         let py: number = Math.round(this.y);
+        //console.log('px=', px, ', py=', py, ', xSpeed=', this.xSpeed, ', ySpeed=', this.ySpeed);
 
-        for (let x: number = px - 1; x < px + 2; x++)
-            for (let y: number = py - 1; y < py + 2; y++)
-                if (x >= 0 && y >= 0 && x < map.width && y < map.height)
-                    if (map.blocks[x][y].isSolid && Math.pow(this.x - x, 2)) {
-                        
+        for (let x: number = px - 1; x < px + 2; x++) {
+            for (let y: number = py - 1; y < py + 2; y++) {
+                if (x >= 0 && y >= 0 && x < map.width && y < map.height) {
+                    if (map.blocks[x][y].isSolid) {
+                        // Block - Top collision
+                        if (this.ySpeed >= 0 && Math.abs(this.x - x) < 1 && y > py) {
+                            if (this.y - y > -1) {
+                                this.ySpeed = 0;
+                                this.y = Math.min(this.y, y - 1)
+                            }
+                        }
+                        // Block - Bottom collision
+                        else if (this.ySpeed <= 0 && Math.abs(this.x - x) < 1 && y < py) {
+                            if (this.y - y < 1) {
+                                this.ySpeed = 0;
+                                this.y = Math.max(this.y, y + 1)
+                            }
+                        }
+
+                        // Block - Left collision
+                        if (this.xSpeed >= 0 && Math.abs(this.y - y) < 1 && x > px) {
+                            if (this.x - x > -1) {
+                                this.xSpeed = 0;
+                                this.x = Math.min(this.x, x - 1)
+                            }
+                        }
+                        // Block - Bottom collision
+                        else if (this.xSpeed <= 0 && Math.abs(this.y - y) < 1 && x < px) {
+                            if (this.x - x < 1) {
+                                this.xSpeed = 0;
+                                this.x = Math.max(this.x, x + 1)
+                            }
+                        }
                     }
-    }
-
-    public updateValue(): void {
-        // Basics
-
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
-
-        this.xSpeed += this.xAcc;
-        this.ySpeed += this.yAcc;
-
-        //this.xSpeed += this.xSpeed > this.xDefaultSpeed ? - this.xFriction : this.xFriction;
-        //this.xSpeed += this.xSpeed > this.xDefaultSpeed ? this.xSpeed == this.xDefaultSpeed ? - this.xFriction : 0 : this.xFriction;
-        this.ySpeed += this.ySpeed > 1 ? - .01 : .01;
+                }
+            }
+        }
     }
 
     public update(map: Map): void {
-        // Update values
-        this.updateValue()
+        // Update position, speed, etc.
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+
+        this.xSpeed = this.xAcc;
+        this.ySpeed = this.yAcc;
 
         // Update physics to blocks around
         this.updateBlockCollision(map);
@@ -81,34 +103,34 @@ export default class Player {
     }
 
     public onKeyPressed(type: number, event: KeyboardEvent): void {
-        if (type == 1) {
+        if (type == 1) { // BUTTON PRESSED
             switch (event.keyCode) {
-                case 37:
-                    this.xAcc = -.01;
+                case 37: // LEFT
+                    this.xAcc = -.05;
                     break;
 
-                case 38:
+                case 38: // UP
                     this.yAcc = -.05;
                     break;
 
-                case 39:
-                    this.xAcc = .01;
+                case 39: // RIGHT
+                    this.xAcc = .05;
                     break;
 
-                case 40:
+                case 40: // DOWN
                     this.yAcc = .05;
                     break;
             }
         }
-        else if (type == 0) {
+        else if (type == 0) { // BUTTON RELEASED
             switch (event.keyCode) {
-                case 37:
-                case 39:
+                case 37: // LEFT
+                case 39: // RIGHT
                     this.xAcc = 0;
                     break;
 
-                case 38:
-                case 40:
+                case 38: // UP
+                case 40: // DOWN
                     this.yAcc = 0;
                     break;
             }
