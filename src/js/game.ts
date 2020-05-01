@@ -6,8 +6,21 @@ export default class Game {
 	private ctx: CanvasRenderingContext2D;
 
 	private map: Map;
-	private players: Player[];
 
+	/*
+	Players - contains player object
+	you - which player is client controlled
+	*/
+	private players: Player[];
+	private you: number;
+
+	private holdingLetters: string[] = [];
+
+	/*
+	Constructor Game()
+
+	Updates the current game screen elements
+	*/
 	constructor() {
 		this.canvas = <HTMLCanvasElement>document.getElementById('canvas');
 		this.canvas.width = window.innerWidth;
@@ -15,22 +28,39 @@ export default class Game {
 		this.ctx = this.canvas.getContext("2d");
 
 		this.map = new Map();
-		this.players = [new Player()];
-		let controlledPlayer = this.players[0];
 
-		/*document.addEventListener('click', function(event) {
+		this.players = [new Player()];
+		this.you = 0;
+
+		/*document.addEventListener('mouseover', function(event) {
+			alert('ho');
+		});
+		
+		document.addEventListener('click', function(event) {
 			alert('ho');
 		});*/
 
 		document.addEventListener('keydown', event => {
-			controlledPlayer.onKeyPressed(1, event);
+			if (this.holdingLetters.indexOf(event.key.toLowerCase(), 0) < 0) {
+				this.holdingLetters.push(event.key.toLowerCase());
+				this.onKeyTouchBegan(event.key.toLowerCase());
+			}
 		});
 
 		document.addEventListener("keyup", event => {
-			controlledPlayer.onKeyPressed(0, event);
+			let index = this.holdingLetters.indexOf(event.key.toLowerCase(), 0);
+			if (index > -1) {
+				this.holdingLetters.splice(index, 1);
+				this.onKeyTouchEnded(event.key.toLowerCase());
+			}
 		});
 	}
 
+	/*
+	Method render()
+
+	Updates the current game screen elements
+	*/
 	public update(): void {
 		this.canvas.width = window.innerWidth;
 		this.canvas.height = window.innerHeight;
@@ -38,8 +68,13 @@ export default class Game {
 
 		this.map.update();
 		this.players.forEach(element => element.update(this.map));
-	}	
+	}
 
+	/*
+	Method render()
+
+	Draws the current game screen elements
+	*/
 	public render(): void {
 		// Background
 		this.ctx.fillStyle = "black";
@@ -48,11 +83,67 @@ export default class Game {
 		this.map.render(this.canvas);
 		this.players.forEach(element => element.render(this.canvas));
 
-		let controlledPlayer = this.players[0];
-        let px: number = Math.round(controlledPlayer.x);
+		let controlledPlayer = this.players[this.you];
+		let px: number = Math.round(controlledPlayer.x);
 		let py: number = Math.round(controlledPlayer.y);
-		
+
 		this.ctx.strokeStyle = "red";
-		this.ctx.strokeRect(40 * (px - 1), 40 * (py - 1), 40 * 3, 40 * 3);
+		this.ctx.strokeRect(36 * (px - 1), 36 * (py - 1), 36 * 3, 36 * 3);
+	}
+
+	/*
+	Method onKeyTouchBegan()
+
+	Called when the user pressed a key.
+	*/
+	private onKeyTouchBegan(key: string): void {
+		switch (key) {
+			case "arrowleft":
+				this.players[this.you].isHoldingLeft = true;
+				break;
+
+			case "arrowup":
+				this.players[this.you].isHoldingUp = true;
+				break;
+
+			case "arrowright":
+				this.players[this.you].isHoldingRight = true;
+				break;
+
+			case "arrowdown":
+				this.players[this.you].isHoldingDown = true;
+				break;
+		}
+	}
+
+	/*
+	Method onKeyTouchEnded()
+
+	Called when the user pressed a key.
+	*/
+	private onKeyTouchEnded(key: string): void {
+		switch (key) {
+			case "arrowleft":
+				this.players[this.you].isHoldingLeft = false;
+				break;
+
+			case "arrowup":
+				this.players[this.you].isHoldingUp = false;
+				break;
+
+			case "arrowright":
+				this.players[this.you].isHoldingRight = false;
+				break;
+
+			case "arrowdown":
+				this.players[this.you].isHoldingDown = false;
+				break;
+
+			case "e":
+				break;
+
+			case "w":
+				break;
+		}
 	}
 }

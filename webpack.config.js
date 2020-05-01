@@ -52,7 +52,7 @@ module.exports = {
 			template: './src/index.html'
 		}),
 		new CopyWebpackPlugin([
-            {from:'src/img',to:'img'} 
+            {from:'src/assets',to:'assets'} 
         ])
   ],
 }

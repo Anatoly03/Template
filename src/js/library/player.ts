@@ -1,5 +1,5 @@
 import Map from "./map";
-import Block from "./blocks";
+//import Block from "./blocks";
 
 export default class Player {
     public x: number;
@@ -11,12 +11,10 @@ export default class Player {
     public xAcc: number;
     public yAcc: number;
 
-    private isHoldingLeft: boolean;
-    private isHoldingRight: boolean;
-    private isHoldingUp: boolean;
-    private isHoldingDown: boolean;
-
-    private holdingLetters: string[] = [];
+    public isHoldingLeft: boolean;
+    public isHoldingRight: boolean;
+    public isHoldingUp: boolean;
+    public isHoldingDown: boolean;
 
     public isBlockBelow: boolean;
 
@@ -109,7 +107,9 @@ export default class Player {
         else
             this.yAcc = 0;
 
-        if (this.isBlockBelow && this.isHoldingDown)
+        if (this.isBlockBelow && !(this.isHoldingRight || this.isHoldingLeft))
+            this.xSpeed *= .3;
+        else if (this.isBlockBelow && this.isHoldingDown)
             this.xSpeed *= .9;
 
         // Update physics to blocks around
@@ -135,48 +135,6 @@ export default class Player {
         }
     }
 
-    public onKeyPressed(type: number, event: KeyboardEvent): void {
-        /*
-        Type 1: Button pressed
-        Type 0: Button released
-        */
-        switch (event.keyCode) {
-            case 37: // Left
-                this.isHoldingLeft = type == 1;
-                break;
-
-            case 38: // Up
-                this.isHoldingUp = type == 1;
-                break;
-
-            case 39: // Right
-                this.isHoldingRight = type == 1;
-                break;
-
-            case 40: // Down
-                this.isHoldingDown = type == 1;
-                break;
-
-            /*case 87: // W
-            case 97: // A
-            case 83: // S
-            case 68: // D*/
-            default:
-                if (type == 1) {
-                    if (this.holdingLetters.indexOf(event.key, 0) < 0)
-                        this.holdingLetters.push(event.key);
-                }
-                else {
-                    let index = this.holdingLetters.indexOf(event.key, 0);
-                    if (index > -1) {
-                        this.holdingLetters.splice(index, 1);
-                    }
-                }
-                console.log(this.holdingLetters);
-                break;
-        }
-    }
-
     public render(canvas: HTMLCanvasElement): void {
         let ctx = canvas.getContext("2d");
 
@@ -184,21 +142,15 @@ export default class Player {
         //ctx.fillRect(40 * this.x, 40 * this.y, 40, 40)
 
         ctx.beginPath();
-        ctx.arc(40 * (this.x + .5), 40 * (this.y + .5), 20, 0, 2 * Math.PI, false);
+        ctx.arc(36 * (this.x + .5), 36 * (this.y + .5), 18, 0, 2 * Math.PI, false);
         ctx.fillStyle = "#3f3f3f";
         ctx.fill();
         ctx.strokeStyle = "#5f5f5f";
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(40 * this.x, 40 * this.y, 5, 0, 2 * Math.PI);
+        ctx.arc(36 * this.x, 36 * this.y, 5, 0, 2 * Math.PI);
         ctx.fillStyle = "blue";
         ctx.fill();
-    }
-
-    // Methods
-
-    public isHolding (letter: string): boolean {
-        return this.holdingLetters.indexOf(letter, 0) < 0
     }
 }

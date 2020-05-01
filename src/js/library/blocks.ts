@@ -1,9 +1,13 @@
+const blocksMap = 'assets/terrain.png';
 
 export default class Block {
     public id: number;
+    private img: HTMLImageElement;
     
     constructor() {
         this.id = 0;
+        this.img = new Image();
+        this.img.src = blocksMap;
     }
 
     public update(): void {}
@@ -12,21 +16,17 @@ export default class Block {
         let ctx = canvas.getContext("2d");
 
         if (this.id == 1) {
-            let k = ctx.createLinearGradient(40 * x, 40 * y, 40 * (x+1), 40 * (y+1))
-            k.addColorStop(0, "#2f2f2f");
-            k.addColorStop(1, "#0f0f0f");
-            ctx.fillStyle = k;
-            ctx.fillRect(40 * x, 40 * y, 40, 40);
+            ctx.drawImage(this.img, 36 * x, 36 * y, 36, 36);
 
             // For control
             ctx.beginPath();
-            ctx.arc(40 * x, 40 * y, 5, 0, 2 * Math.PI);
+            ctx.arc(36 * x, 36 * y, 5, 0, 2 * Math.PI);
             ctx.fillStyle = "red";
             ctx.fill();
         }
         else {
             ctx.beginPath();
-            ctx.arc(40 * x, 40 * y, 5, 0, 2 * Math.PI);
+            ctx.arc(36 * x, 36 * y, 5, 0, 2 * Math.PI);
             ctx.fillStyle = "#1f0000";
             ctx.fill();
         }
