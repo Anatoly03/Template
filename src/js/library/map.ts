@@ -4,6 +4,7 @@ export default class Map {
     public blocks: Block[][] = [];
     public width: number;
     public height: number;
+    public gravity: number;
 
     constructor() {
         this.width = 20;

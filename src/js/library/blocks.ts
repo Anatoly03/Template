@@ -1,7 +1,5 @@
 
 export default class Block {
-    private ctx: CanvasRenderingContext2D;
-    
     public id: number;
     
     constructor() {
