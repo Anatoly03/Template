@@ -1,14 +1,13 @@
 import Block from "./blocks";
 
 export default class Map {
-    private blocks: Block[][];
-    private width: number;
-    private height: number;
+    public blocks: Block[][] = [];
+    public width: number;
+    public height: number;
 
     constructor() {
-        this.blocks = [];
-        this.width = 40;
-        this.height = 20;
+        this.width = 20;
+        this.height = 15;
 
         for (let i: number = 0; i < this.width; i++)
         {
@@ -17,6 +16,7 @@ export default class Map {
             {
                 this.blocks[i][j] = new Block();
                 if (j + Math.floor(i/5)%2 > 10) this.blocks[i][j].id = 1;
+                if (j + Math.floor(i/5)%2 < 2) this.blocks[i][j].id = 1;
             }
         }
     }
