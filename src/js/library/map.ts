@@ -7,8 +7,8 @@ export default class Map {
     public gravity: number;
 
     constructor() {
-        this.width = 20;
-        this.height = 15;
+        this.width = 40;
+        this.height = 35;
 
         for (let i: number = 0; i < this.width; i++)
         {

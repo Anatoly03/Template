@@ -76,19 +76,26 @@ export default class Game {
 	Draws the current game screen elements
 	*/
 	public render(): void {
+		let controlledPlayer = this.players[this.you];
+
 		// Background
 		this.ctx.fillStyle = "black";
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+		//#region GameScreen
+		this.ctx.translate(this.canvas.width *.5 - 40 * controlledPlayer.x, this.canvas.height *.5 - 40 * controlledPlayer.y);
+
 		this.map.render(this.canvas);
 		this.players.forEach(element => element.render(this.canvas));
 
-		let controlledPlayer = this.players[this.you];
 		let px: number = Math.round(controlledPlayer.x);
 		let py: number = Math.round(controlledPlayer.y);
 
 		this.ctx.strokeStyle = "red";
 		this.ctx.strokeRect(36 * (px - 1), 36 * (py - 1), 36 * 3, 36 * 3);
+
+		this.ctx.translate(this.canvas.width *.5 - 40 * controlledPlayer.x, this.canvas.height *.5 - 40 * controlledPlayer.y);
+		//#endregion GameScreen
 	}
 
 	/*
