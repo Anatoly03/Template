@@ -7,8 +7,8 @@ export default class Map {
     public gravity: number;
 
     constructor() {
-        this.width = 40;
-        this.height = 35;
+        this.width = 60;
+        this.height = 55;
 
         for (let i: number = 0; i < this.width; i++) {
             this.blocks[i] = [];

@@ -4,6 +4,8 @@ import Player from "./library/player";
 export default class Game {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
+	private fps: number;
+	private lastCalledTime: number;
 
 	/*
 	Block Map
@@ -26,6 +28,8 @@ export default class Game {
 	Game configurations
 	*/
 	private isMinimapShowing: boolean = true;
+	private isInfoShowing: boolean = false;
+	private selectedItem: number = 0;
 
 	/*
 	Constructor Game()
@@ -87,6 +91,17 @@ export default class Game {
 	Draws the current game screen elements
 	*/
 	public render(): void {
+		// The current fps
+		if (!this.lastCalledTime) {
+			this.lastCalledTime = Date.now();
+			this.fps = 0;
+			return;
+		}
+		let delta = (Date.now() - this.lastCalledTime) / 1000;
+		this.lastCalledTime = Date.now();
+		this.fps = 1 / delta;
+
+		// The player you control
 		let controlledPlayer = this.players[this.you];
 
 		// Background
@@ -137,11 +152,36 @@ export default class Game {
 		this.ctx.fillStyle = "#1f1f1f";
 		this.ctx.fillRect(0, this.canvas.height - 36, this.canvas.width, 36);
 
-		for (let i: number = 0; i < 11; i++) {
+		for (let i: number = 0; i < 10; i++) {
 			this.ctx.fillStyle = "#2f2f2f";
-			this.ctx.fillRect(this.canvas.width*.5 + 55 * i, this.canvas.height - 50, 50, 50);
+			this.ctx.fillRect(this.canvas.width * .5 + 55 * (i - 4.5), this.canvas.height - 60, 50, 50);
+			if (this.selectedItem == i) {
+				this.ctx.strokeStyle = "#4f4f4f";
+				this.ctx.lineWidth = 5;
+				this.ctx.strokeRect(this.canvas.width * .5 + 55 * (i - 4.5) + 5, this.canvas.height - 55, 40, 40);
+			}
 		}
 		//#endregion BottomControlBar
+
+		//#region Information
+		if (this.isInfoShowing) {
+			let lines: string[] = [
+				"FPS:" + this.fps.toPrecision(3),
+				"X:" + controlledPlayer.x,
+				"Y:" + controlledPlayer.y,
+				"xSpeed:" + controlledPlayer.xSpeed,
+				"ySpeed:" + controlledPlayer.ySpeed,
+			];
+
+			let i: number = 0;
+			lines.forEach(line => {
+				i++;
+				this.ctx.fillStyle = "white";
+				this.ctx.font = "15px Arial";
+				this.ctx.fillText(line, 20, 15 * i + 20)
+			});
+		}
+		//#endregion Information
 	}
 
 	/*
@@ -165,6 +205,18 @@ export default class Game {
 
 			case "arrowdown":
 				this.players[this.you].isHoldingDown = true;
+				break;
+
+			case "1":
+			case "2":
+			case "3":
+			case "4":
+			case "5":
+			case "6":
+			case "7":
+			case "8":
+			case "9":
+				this.selectedItem = parseInt(key);
 				break;
 		}
 	}
@@ -200,6 +252,10 @@ export default class Game {
 
 			case "m":
 				this.isMinimapShowing = !this.isMinimapShowing;
+				break;
+
+			case "i":
+				this.isInfoShowing = !this.isInfoShowing;
 				break;
 		}
 	}

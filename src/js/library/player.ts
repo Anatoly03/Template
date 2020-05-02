@@ -2,21 +2,27 @@ import Map from "./map";
 //import Block from "./blocks";
 
 export default class Player {
+    // Position
     public x: number;
     public y: number;
 
+    // Speed
     public xSpeed: number;
     public ySpeed: number;
 
+    // Acceleration
     public xAcc: number;
     public yAcc: number;
 
+    // Movement Controls
     public isHoldingLeft: boolean;
     public isHoldingRight: boolean;
     public isHoldingUp: boolean;
     public isHoldingDown: boolean;
 
+    // Controls
     public isBlockBelow: boolean;
+
 
     constructor() {
         this.x = 7;
@@ -111,6 +117,12 @@ export default class Player {
             this.xSpeed *= .3;
         else if (this.isBlockBelow && this.isHoldingDown)
             this.xSpeed *= .9;
+
+        if (this.xSpeed < Math.pow(10, -5) && this.xSpeed > -Math.pow(10, -5))
+            this.xSpeed = 0;
+
+        if (this.ySpeed < Math.pow(10, -5) && this.ySpeed > -Math.pow(10, -5))
+            this.ySpeed = 0;
 
         // Update physics to blocks around
         this.updateBlockCollision(map);
