@@ -3,11 +3,14 @@ const blocksMap = 'assets/terrain.png';
 export default class Block {
     public id: number;
     private img: HTMLImageElement;
+    public minimapPixel: string;
     
     constructor() {
         this.id = 0;
         this.img = new Image();
         this.img.src = blocksMap;
+
+        this.minimapPixel = "black";
     }
 
     public update(): void {}
@@ -18,7 +21,9 @@ export default class Block {
         if (this.id == 1) {
             ctx.drawImage(this.img, 36 * x, 36 * y, 36, 36);
 
-            // For control
+            /*debug stuff: red block dots
+            
+            //For control
             ctx.beginPath();
             ctx.arc(36 * x, 36 * y, 5, 0, 2 * Math.PI);
             ctx.fillStyle = "red";
@@ -28,7 +33,7 @@ export default class Block {
             ctx.beginPath();
             ctx.arc(36 * x, 36 * y, 5, 0, 2 * Math.PI);
             ctx.fillStyle = "#1f0000";
-            ctx.fill();
+            ctx.fill();*/
         }
     }
     

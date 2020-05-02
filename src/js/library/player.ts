@@ -19,8 +19,8 @@ export default class Player {
     public isBlockBelow: boolean;
 
     constructor() {
-        this.x = 3;
-        this.y = 5;
+        this.x = 7;
+        this.y = 25;
 
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -148,9 +148,11 @@ export default class Player {
         ctx.strokeStyle = "#5f5f5f";
         ctx.stroke();
 
+        /*debug stuff
+        
         ctx.beginPath();
         ctx.arc(36 * this.x, 36 * this.y, 5, 0, 2 * Math.PI);
         ctx.fillStyle = "blue";
-        ctx.fill();
+        ctx.fill();*/
     }
 }
