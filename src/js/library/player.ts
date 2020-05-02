@@ -22,11 +22,13 @@ export default class Player {
 
     // Controls
     public isBlockBelow: boolean;
-
+    public isBlockAbove: boolean;
+    public isBlockToRight: boolean;
+    public isBlockToLeft: boolean;
 
     constructor() {
         this.x = 7;
-        this.y = 25;
+        this.y = 5;
 
         this.xSpeed = 0;
         this.ySpeed = 0;
@@ -40,6 +42,9 @@ export default class Player {
         this.isHoldingDown = false;
 
         this.isBlockBelow = false;
+        this.isBlockAbove = false;
+        this.isBlockToRight = false;
+        this.isBlockToLeft = false;
     }
 
     public updateBlockCollision(map: Map): void {
@@ -48,39 +53,45 @@ export default class Player {
         //console.log('px=', px, ', py=', py, ', xSpeed=', this.xSpeed, ', ySpeed=', this.ySpeed);
 
         this.isBlockBelow = false;
+        this.isBlockAbove = false;
+        this.isBlockToRight = false;
+        this.isBlockToLeft = false;
 
         for (let x: number = px - 1; x < px + 2; x++) {
             for (let y: number = py - 1; y < py + 2; y++) {
                 if (x >= 0 && y >= 0 && x < map.width && y < map.height) {
                     if (map.blocks[x][y].isSolid) {
-                        // Block - Top collision
-                        if (this.ySpeed >= 0 && Math.abs(this.x - x) < 1 && y > py) {
+                        // Block - From Top collision
+                        if (this.ySpeed > 0 && Math.abs(this.x - x) < 1 && y > py) {
                             if (this.y > y - 1) {
-                                this.ySpeed = 0;
+                                this.ySpeed = Math.min(0, this.ySpeed);
                                 this.y = Math.min(this.y, y - 1);
                                 this.isBlockBelow = true;
                             }
                         }
-                        // Block - Bottom collision
-                        else if (this.ySpeed <= 0 && Math.abs(this.x - x) < 1 && y < py) {
+                        // Block - From Bottom collision
+                        else if (this.ySpeed < 0 && Math.abs(this.x - x) < 1 && y < py) {
                             if (this.y < y + 1) {
-                                this.ySpeed = 0;
-                                this.y = Math.max(this.y, y + 1)
+                                this.ySpeed = Math.max(0, this.ySpeed);
+                                this.y = Math.max(this.y, y + 1);
+                                this.isBlockAbove = true;
                             }
                         }
 
-                        // Block - Left collision
-                        if (this.xSpeed >= 0 && Math.abs(this.y - y) < 1 && x > px) {
+                        // Block - From Left collision
+                        if (this.xSpeed > 0 && Math.abs(this.y - y) < 1 && x > px) {
                             if (this.x > x - 1) {
-                                this.xSpeed = 0;
-                                this.x = Math.min(this.x, x - 1)
+                                this.xSpeed = Math.min(0, this.xSpeed);
+                                this.x = Math.min(this.x, x - 1);
+                                this.isBlockToRight = true;
                             }
                         }
-                        // Block - Bottom collision
-                        else if (this.xSpeed <= 0 && Math.abs(this.y - y) < 1 && x < px) {
+                        // Block - From Right collision
+                        else if (this.xSpeed < 0 && Math.abs(this.y - y) < 1 && x < px) {
                             if (this.x < x + 1) {
-                                this.xSpeed = 0;
-                                this.x = Math.max(this.x, x + 1)
+                                this.xSpeed = Math.max(0, this.xSpeed);
+                                this.x = Math.max(this.x, x + 1);
+                                this.isBlockToLeft = true;
                             }
                         }
                     }
@@ -100,27 +111,40 @@ export default class Player {
         else if (this.isHoldingRight)
             this.xAcc = .005;
 
-        // Update
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
-
+        // Update speed
         this.xSpeed += this.xAcc;
         this.ySpeed += this.yAcc;
 
+        // Maximal Speed
+        if (this.ySpeed > .5)
+            this.ySpeed = .5;
+        else if (this.ySpeed < -.5)
+            this.ySpeed = -.5;
+        if (this.xSpeed > .5)
+            this.xSpeed = .5;
+        else if (this.xSpeed < -.5)
+            this.xSpeed = -.5;
+
+        // Gravity when in air
         this.xAcc = 0;
         if (!this.isBlockBelow)
             this.yAcc = .01;
         else
             this.yAcc = 0;
 
+        // Friction on ground
         if (this.isBlockBelow && !(this.isHoldingRight || this.isHoldingLeft))
             this.xSpeed *= .3;
         else if (this.isBlockBelow && this.isHoldingDown)
             this.xSpeed *= .9;
 
+        // Update position
+        this.x += this.xSpeed;
+        this.y += this.ySpeed;
+
+        // No need for too precise values
         if (this.xSpeed < Math.pow(10, -5) && this.xSpeed > -Math.pow(10, -5))
             this.xSpeed = 0;
-
         if (this.ySpeed < Math.pow(10, -5) && this.ySpeed > -Math.pow(10, -5))
             this.ySpeed = 0;
 

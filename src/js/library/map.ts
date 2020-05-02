@@ -16,6 +16,7 @@ export default class Map {
                 this.blocks[i][j] = new Block();
                 if (j + Math.floor(i / 5) % 2 > 30) this.blocks[i][j].id = 1;
                 if (j + Math.floor(i / 5) % 2 < 2) this.blocks[i][j].id = 1;
+                if (j > 25 && i == 17) this.blocks[i][j].id = 1;
 
                 if (this.blocks[i][j].id == 1)
                     this.blocks[i][j].minimapPixel = "red";

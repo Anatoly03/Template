@@ -167,10 +167,11 @@ export default class Game {
 		if (this.isInfoShowing) {
 			let lines: string[] = [
 				"FPS:" + this.fps.toPrecision(3),
-				"X:" + controlledPlayer.x,
-				"Y:" + controlledPlayer.y,
-				"xSpeed:" + controlledPlayer.xSpeed,
-				"ySpeed:" + controlledPlayer.ySpeed,
+				"X:" + controlledPlayer.x.toPrecision(5),
+				"Y:" + controlledPlayer.y.toPrecision(5),
+				"xSpeed:" + controlledPlayer.xSpeed.toPrecision(5),
+				"ySpeed:" + controlledPlayer.ySpeed.toPrecision(5),
+				"Blocks around: " + (controlledPlayer.isBlockToLeft ? "L " : "") + (controlledPlayer.isBlockAbove ? "T " : "") + (controlledPlayer.isBlockToRight ? "R " : "") + (controlledPlayer.isBlockBelow ? "B " : ""),
 			];
 
 			let i: number = 0;
@@ -245,9 +246,6 @@ export default class Game {
 				break;
 
 			case "e":
-				break;
-
-			case "w":
 				break;
 
 			case "m":
