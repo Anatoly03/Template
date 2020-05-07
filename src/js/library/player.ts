@@ -26,6 +26,18 @@ export default class Player {
     public isBlockToRight: boolean;
     public isBlockToLeft: boolean;
 
+
+
+    // Firing Controls
+    public isHoldingW: boolean;
+    public isHoldingA: boolean;
+    public isHoldingS: boolean;
+    public isHoldingD: boolean;
+
+    // Stats
+    public alive: boolean;
+    //public health: number;
+
     constructor() {
         this.x = 7;
         this.y = 5;
@@ -41,10 +53,7 @@ export default class Player {
         this.isHoldingUp = false;
         this.isHoldingDown = false;
 
-        this.isBlockBelow = false;
-        this.isBlockAbove = false;
-        this.isBlockToRight = false;
-        this.isBlockToLeft = false;
+        this.alive = true;
     }
 
     public updateBlockCollision(map: Map): void {
@@ -103,92 +112,88 @@ export default class Player {
     }
 
     public update(map: Map): void {
-        if (this.isHoldingUp && this.isBlockBelow)
-            this.yAcc = -.3;
+        if (this.alive) {
+            // Jump Condition
+            if (this.isHoldingUp && this.isBlockBelow)
+                this.yAcc = -.6;
 
-        if (this.isHoldingLeft)
-            this.xAcc = -.005;
-        else if (this.isHoldingRight)
-            this.xAcc = .005;
+            // Movement Condition
+            let movingspeed = .006
+            if (this.isHoldingLeft && !this.isBlockToLeft)
+                this.xAcc = -movingspeed;
+            if (this.isHoldingRight && !this.isBlockToRight)
+                this.xAcc = movingspeed;
 
-        // Update speed
-        this.xSpeed += this.xAcc;
-        this.ySpeed += this.yAcc;
+            // Update speed
+            this.xSpeed += this.xAcc;
+            this.ySpeed += this.yAcc;
 
-        // Maximal Speed
-        if (this.ySpeed > .5)
-            this.ySpeed = .5;
-        else if (this.ySpeed < -.5)
-            this.ySpeed = -.5;
-        if (this.xSpeed > .5)
-            this.xSpeed = .5;
-        else if (this.xSpeed < -.5)
-            this.xSpeed = -.5;
+            // Maximal Speed
+            let maxspeed = .4
+            if (this.ySpeed > maxspeed)
+                this.ySpeed = maxspeed;
+            else if (this.ySpeed < -maxspeed)
+                this.ySpeed = -maxspeed;
+            if (this.xSpeed > maxspeed)
+                this.xSpeed = maxspeed;
+            else if (this.xSpeed < -maxspeed)
+                this.xSpeed = -maxspeed;
 
-        // Gravity when in air
-        this.xAcc = 0;
-        if (!this.isBlockBelow)
-            this.yAcc = .01;
-        else
-            this.yAcc = 0;
+            // Gravity when in air
+            if (!this.isBlockBelow)
+                this.yAcc = .02;
+            else
+                this.yAcc = 0;
 
-        // Friction on ground
-        if (this.isBlockBelow && !(this.isHoldingRight || this.isHoldingLeft))
-            this.xSpeed *= .3;
-        else if (this.isBlockBelow && this.isHoldingDown)
-            this.xSpeed *= .9;
+            // Friction on ground
+            this.xAcc = 0;
+            if (this.isBlockBelow && !(this.isHoldingRight || this.isHoldingLeft))
+                this.xSpeed *= .3;
+            else if (this.isBlockBelow && this.isHoldingDown)
+                this.xSpeed *= .9;
 
-        // Update position
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
+            // Update position
+            this.x += this.xSpeed;
+            this.y += this.ySpeed;
 
-        // No need for too precise values
-        if (this.xSpeed < Math.pow(10, -5) && this.xSpeed > -Math.pow(10, -5))
-            this.xSpeed = 0;
-        if (this.ySpeed < Math.pow(10, -5) && this.ySpeed > -Math.pow(10, -5))
-            this.ySpeed = 0;
+            // No need for too precise values
+            if (this.xSpeed < Math.pow(10, -5) && this.xSpeed > -Math.pow(10, -5))
+                this.xSpeed = 0;
+            if (this.ySpeed < Math.pow(10, -5) && this.ySpeed > -Math.pow(10, -5))
+                this.ySpeed = 0;
 
-        // Update physics to blocks around
-        this.updateBlockCollision(map);
+            // Update physics to blocks around
+            this.updateBlockCollision(map);
 
-        // You cannot leave the border
-        if (this.x < 0) {
-            this.x = 0;
-            this.xSpeed = 0;
-        }
-        else if (this.x > map.width - 1) {
-            this.x = map.width - 1;
-            this.xSpeed = 0;
-        }
-
-        if (this.y < 0) {
-            this.y = 0;
-            this.ySpeed = 0;
-        }
-        else if (this.y > map.height - 1) {
-            this.y = map.height - 1;
-            this.ySpeed = 0;
+            // You cannot leave the border
+            if (this.x < 0) {
+                this.x = 0;
+                this.xSpeed = 0;
+            }
+            else if (this.x > map.width - 1) {
+                this.x = map.width - 1;
+                this.xSpeed = 0;
+            }
+            if (this.y < 0) {
+                this.y = 0;
+                this.ySpeed = 0;
+            }
+            else if (this.y > map.height - 1) {
+                this.y = map.height - 1;
+                this.ySpeed = 0;
+            }
         }
     }
 
     public render(canvas: HTMLCanvasElement): void {
-        let ctx = canvas.getContext("2d");
-
-        //ctx.fillStyle = "#3f3f3f";
-        //ctx.fillRect(40 * this.x, 40 * this.y, 40, 40)
-
-        ctx.beginPath();
-        ctx.arc(36 * (this.x + .5), 36 * (this.y + .5), 18, 0, 2 * Math.PI, false);
-        ctx.fillStyle = "#3f3f3f";
-        ctx.fill();
-        ctx.strokeStyle = "#5f5f5f";
-        ctx.stroke();
-
-        /*debug stuff
-        
-        ctx.beginPath();
-        ctx.arc(36 * this.x, 36 * this.y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = "blue";
-        ctx.fill();*/
+        if (this.alive) {
+            let ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.arc(36 * (this.x + .5), 36 * (this.y + .5), 18, 0, 2 * Math.PI, false);
+            ctx.fillStyle = "#3f3f3f";
+            ctx.fill();
+            ctx.strokeStyle = "#5f5f5f";
+            ctx.stroke();
+        }
     }
 }
