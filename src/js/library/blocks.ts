@@ -3,14 +3,11 @@ const blocksMap = 'assets/terrain.png';
 export default class Block {
     public id: number;
     private img: HTMLImageElement;
-    public minimapPixel: string;
     
     constructor() {
         this.id = 0;
         this.img = new Image();
         this.img.src = blocksMap;
-
-        this.minimapPixel = "black";
     }
 
     public update(): void {}
@@ -37,5 +34,10 @@ export default class Block {
 
     get isSolid(): boolean {
         return this.id != 0;
+    }
+
+    get minimapPixel(): string {
+        if (this.isSolid) return "red";
+        return "black";
     }
 }
