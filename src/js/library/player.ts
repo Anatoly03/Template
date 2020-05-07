@@ -29,10 +29,10 @@ export default class Player {
 
 
     // Firing Controls
-    public isHoldingW: boolean;
-    public isHoldingA: boolean;
-    public isHoldingS: boolean;
-    public isHoldingD: boolean;
+    public isAttackingLeft: boolean;
+    public isAttackingUp: boolean;
+    public isAttackingRight: boolean;
+    public isAttackingDown: boolean;
 
     // Stats
     public alive: boolean;
@@ -71,7 +71,7 @@ export default class Player {
                 if (x >= 0 && y >= 0 && x < map.width && y < map.height) {
                     if (map.blocks[x][y].isSolid) {
                         // Block - From Top collision
-                        if (this.ySpeed > 0 && Math.abs(this.x - x) < 1 && y > py) {
+                        if (this.ySpeed > 0 && Math.abs(this.x - x) < 1 && y > this.y) {
                             if (this.y > y - 1) {
                                 this.ySpeed = Math.min(0, this.ySpeed);
                                 this.y = Math.min(this.y, y - 1);
@@ -79,7 +79,7 @@ export default class Player {
                             }
                         }
                         // Block - From Bottom collision
-                        else if (this.ySpeed < 0 && Math.abs(this.x - x) < 1 && y < py) {
+                        else if (this.ySpeed < 0 && Math.abs(this.x - x) < 1 && y < this.y) {
                             if (this.y < y + 1) {
                                 this.ySpeed = Math.max(0, this.ySpeed);
                                 this.y = Math.max(this.y, y + 1);
@@ -88,7 +88,7 @@ export default class Player {
                         }
 
                         // Block - From Left collision
-                        if (this.xSpeed > 0 && Math.abs(this.y - y) < 1 && x > px) {
+                        if (this.xSpeed > 0 && Math.abs(this.y - y) < 1 && x > this.x) {
                             if (this.x > x - 1) {
                                 this.xSpeed = Math.min(0, this.xSpeed);
                                 this.x = Math.min(this.x, x - 1);
@@ -96,7 +96,7 @@ export default class Player {
                             }
                         }
                         // Block - From Right collision
-                        else if (this.xSpeed < 0 && Math.abs(this.y - y) < 1 && x < px) {
+                        else if (this.xSpeed < 0 && Math.abs(this.y - y) < 1 && x < this.x) {
                             if (this.x < x + 1) {
                                 this.xSpeed = Math.max(0, this.xSpeed);
                                 this.x = Math.max(this.x, x + 1);
