@@ -1,4 +1,5 @@
-# Myth of Legends
-Room Type: _BattleRoom_
+# Template
+Pull it for your fun!
 
-
+## How to start?
+`yarn` to download packages, `yarn dev` to run and evolve your code, glhf!
